@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <script>
+            function openVideoPage(link) {
+                document.open();
+                document.write('<!DOCTYPE html><html><body>');
+                document.write(['<iframe width="560" height="315" src="', link, '?autoplay=1" frameborder="0" allowfullscreen></iframe>'].join(""));
+                document.write('<p><input type="button" value="Go Back" onclick="window.history.back()"></p>');
+                document.write('</body></html>');
+                document.close();
+            }
+        </script>
+    </head>
+    <body>
+        <p><input type="button" value="video 1" onclick="openVideoPage('https://www.youtube.com/embed/XT9uf1wwegU')"></p>
+        <p><input type="button" value="video 2" onclick="openVideoPage('https://www.youtube.com/embed/ee925OTFBCA')"></p>
+        <p><input type="button" value="video 3" onclick="openVideoPage('https://www.youtube.com/embed/cyeUp_-ZK9I')"></p>
+    </body>
+<html>
