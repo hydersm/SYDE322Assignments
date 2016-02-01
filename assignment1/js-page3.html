@@ -1,0 +1,57 @@
+<!-- Submitted by Hyder SM 20458524 and Elliot Campbell 20479865 -->
+<!DOCTYPE html> 
+<html>  
+	<header>          
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		      
+	</header>  
+	<body>     
+		<h1 id="test">A simple calculator</h1>             
+		<p>X: <input type="number" id="firNum"></p>
+		<p>Y: <input type="number" id="secNum"></p>
+		<p>
+			<input type="button" value="+" onclick="add()">
+			<input type="button" value="-" onclick="subtract()">
+			<input type="button" value="x" onclick="multiply()">
+			<input type="button" value="/" onclick="divide()">
+		</p>
+		<p> Result: <input id="result" type="text" disabled="true"></p>      
+	</body> 
+	<script>
+
+	function add() {
+		var first = parseFloat($("#firNum").val()) || 0;
+		var second = parseFloat($("#secNum").val()) || 0;
+		var result = first + second;
+		$("#result").val(result);
+	}
+
+	function subtract() {
+		var first = parseFloat($("#firNum").val()) || 0;
+		var second = parseFloat($("#secNum").val()) || 0;
+		var result = first - second;
+		
+		$("#result").val(result);
+	}
+
+	function multiply() {
+		var first = parseFloat($("#firNum").val()) || 0;
+		var second = parseFloat($("#secNum").val()) || 0;
+		var result = first * second;
+		$("#result").val(result);
+	}
+
+	function divide() {
+		var first = parseFloat($("#firNum").val()) || 0;
+		var second = parseFloat($("#secNum").val()) || 0;
+		if (second === 0)
+			$("#result").val("You can't divide by zero!");
+
+		else {
+			var result = first / second;
+			$("#result").val(result);
+		}
+	}
+	</script>
+</html> 

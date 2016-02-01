@@ -1,0 +1,66 @@
+<!-- Submitted by Hyder SM 20458524 and Elliot Campbell 20479865 -->
+<!DOCTYPE html> 
+<html>  
+	<header>          
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<link title="style1" rel="stylesheet" href="style1.css" type="text/css" />
+		<link title="style2" rel="stylesheet" href="style2.css" type="text/css" />
+		<link title="style3" rel="stylesheet" href="style3.css" type="text/css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script>  
+			function changeText() { // this gets executed when called          
+				var element = document.getElementById("test");            
+				if (element.innerHTML.match("SYDE 322")) {                
+					element.innerHTML = "Hello World!";          
+				} else {                
+					element.innerHTML = "My SYDE 322 test script";      
+				}      
+			} 
+			function changeStyle1() {          
+			// change text style to these specific properties
+				$('link[title="style1"]').prop('disabled', false);
+				$('link[title="style2"]').prop('disabled', true);
+				$('link[title="style3"]').prop('disabled', true); 
+			}
+
+			function changeStyle2() {          
+			// change text style to these specific properties    
+    
+				$('link[title="style1"]').prop('disabled', true);
+				$('link[title="style2"]').prop('disabled', false);
+				$('link[title="style3"]').prop('disabled', true);          
+   
+			}
+
+			function changeStyle3() {          
+			// change text style to these specific properties
+
+				$('link[title="style1"]').prop('disabled', true);
+				$('link[title="style2"]').prop('disabled', true);
+				$('link[title="style3"]').prop('disabled', false);          
+			} 
+			function writeText() { // generate a new page      
+				document.open();      
+				document.write('<!DOCTYPE html><html><body>');          
+				document.write('<h2 id="test2" style="color:blue"> My first fully-generated HTML page!</h2>');          
+				document.write('<p><input type="button" value="Go Back" onclick="window.history.back()"></p>');      
+				document.write('</body></html>');      
+				document.close();    
+			}
+		</script>  
+	</header>  
+	<body>     
+		<h1 id="test" onclick="changeText()">My SYDE 322 test script</h1>     
+		<script>
+			$('link[title=style1]').prop('disabled', true);
+			$('link[title=style2]').prop('disabled', true);
+			$('link[title=style3]').prop('disabled', true);         
+		// the following gets executed immediately          
+			// document.getElementById("test").innerHTML = "Hello World!";      
+		</script>          
+		<p><input type="button" value="Style 1" onclick="changeStyle1()"></p>
+		<p><input type="button" value="Style 2" onclick="changeStyle2()"></p> 
+		<p><input type="button" value="Style 3" onclick="changeStyle3()"></p>        
+		<p><input type="button" value="Generate New Page" onclick="writeText()"></p> 
+	</body> 
+</html> 
