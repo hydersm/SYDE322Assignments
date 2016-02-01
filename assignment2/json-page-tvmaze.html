@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <table id="showTable">
+            <tr>
+                <th>Name of Show</th>
+                <th>URL of Show</th>
+                <th>Short Summary</th>
+                <th>Main Cast</th>
+            </tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+            <tr></tr>
+        </table>
+    </body>
+    <script>
+        var shows = ['archer'];
+        var rows = document.getElementById('showTable').getElementsByTagName('tr');
+
+        for (var i = 0; i<shows.length; i++) {
+            $.ajax({
+                url: 'http://api.tvmaze.com/search/shows?q=' + shows[i],
+                success: function(data){
+                    rows[i].innerHTML = '<td>' + data[0].show.name + '</td>' + '<td>' + data[0].show.url + '</td>' +'<td>' + data[0].show.summary + '</td>';
+                    
+                    $.ajax({
+                        url: 'http://api.tvmaze.com/shows/' + data[0].show.id + '/cast',
+                        success: function(data){
+                            var people = '';
+
+                            for (var j = 0; j < 4; j++) {
+                                people += data[j].person.name + '<br>';
+                            }
+
+                            rows[i].innerHTML += '<td>' + people + '</td>';
+                        }
+                    });
+                }
+            });
+            
+        }
+    </script>
+</html>
