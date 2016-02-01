@@ -2,14 +2,47 @@
 <html>
     <head>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <style>
+            #showTable td, th {
+                margin:0px;
+                padding:5px;
+                border: solid 1px black;
+            }
+
+            #showTable th {
+                font-style: italic;
+            }
+
+            #showTable tr:nth-child(even) {
+                background-color: rgb(223, 216, 231);
+            }
+
+            #showTable{
+                border-spacing:0;
+            }
+            #name {
+                width:10%;
+            }
+            #url {
+                width:10%;
+            }
+            #summary {
+                width:40%;
+            }
+            #cast {
+                width:30%;
+            }
+
+        </style>
     </head>
     <body>
+        <h1> My favourite TV Shows </h1>
         <table id="showTable">
             <tr>
-                <th>Name of Show</th>
-                <th>URL of Show</th>
-                <th>Short Summary</th>
-                <th>Main Cast</th>
+                <th id="name">Name of Show</th>
+                <th id="url">URL of Show</th>
+                <th id="summary">Short Summary</th>
+                <th id="cast">Main Cast</th>
             </tr>
             <tr></tr>
             <tr></tr>
@@ -19,25 +52,37 @@
         </table>
     </body>
     <script>
-        var shows = ['archer'];
+        var shows = ['archer', 'simpsons', 'south%20park', 'futurama', 'rick%20and%20morty'];
         var rows = document.getElementById('showTable').getElementsByTagName('tr');
 
         for (var i = 0; i<shows.length; i++) {
             $.ajax({
                 url: 'http://api.tvmaze.com/search/shows?q=' + shows[i],
+                async: false,
                 success: function(data){
-                    rows[i].innerHTML = '<td>' + data[0].show.name + '</td>' + '<td>' + data[0].show.url + '</td>' +'<td>' + data[0].show.summary + '</td>';
+                    rows[i+1].innerHTML = '<td>' + data[0].show.name + '</td>' + '<td>' + data[0].show.url + '</td>' +'<td>' + data[0].show.summary + '</td>';
                     
                     $.ajax({
                         url: 'http://api.tvmaze.com/shows/' + data[0].show.id + '/cast',
+                        async:false, 
                         success: function(data){
                             var people = '';
+                            var dict = {};
+                            var count = 0;
+                            for (var j = 0; j < data.length; j++) {
+                                if (!dict[data[j].person.name]){
+                                    people += data[j].person.name + ';<br>';
+                                    dict[data[j].person.name] = true;
+                                    count++;
+                                }
 
-                            for (var j = 0; j < 4; j++) {
-                                people += data[j].person.name + '<br>';
+                                if (count === 4) {
+                                    people += '...';
+                                    break;
+                                }
                             }
 
-                            rows[i].innerHTML += '<td>' + people + '</td>';
+                            rows[i+1].innerHTML += '<td>' + people + '</td>';
                         }
                     });
                 }
