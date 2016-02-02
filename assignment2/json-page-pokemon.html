@@ -38,23 +38,23 @@
     <body>
         <h1> Enter a Pokemon! </h1>
         <input type="text" id="pokeInput"></input> <button onClick="getPokemon()">Add to Table</button></br></br>
-        <input type="checkbox" onClick="changeColumn(1)" checked>attack</input>
-        <input type="checkbox" onClick="changeColumn(2)" checked>defense</input>
-        <input type="checkbox" onClick="changeColumn(3)" checked>sp atk</input>
-        <input type="checkbox" onClick="changeColumn(4)" checked>sp def</input>
-        <input type="checkbox" onClick="changeColumn(5)" checked>speed</input>
-        <input type="checkbox" onClick="changeColumn(6)" checked>EV Yield</input>
+        <input type="checkbox" onClick="changeColumn(1)" checked>name</input>
+        <input type="checkbox" onClick="changeColumn(2)" checked>attack</input>
+        <input type="checkbox" onClick="changeColumn(3)" checked>defense</input>
+        <input type="checkbox" onClick="changeColumn(4)" checked>sp atk</input>
+        <input type="checkbox" onClick="changeColumn(5)" checked>sp def</input>
+        <input type="checkbox" onClick="changeColumn(6)" checked>speed</input>
         <input type="checkbox" onClick="changeColumn(7)" checked>types</input>
         <input type="checkbox" onClick="changeColumn(8)" checked>height</input>                 
         <input type="checkbox" onClick="changeColumn(9)" checked>weight</input>
         <table id="pokeTable">
             <tr>
+                <th>Name</th>
                 <th>Attack</th>
                 <th>Defense</th>
                 <th>SP Attack</th>
                 <th>SP Defense</th>
                 <th>Speed</th>
-                <th>EV Yield</th>
                 <th>Types</th>
                 <th>Height</th>
                 <th>Weight</th>
@@ -68,18 +68,39 @@
             $('#pokeTable tr > *:nth-child('+ num +')').toggle();
         }
 
-        function getPokemon() {
-            var name = $("#pokeInput").val();
+        function getPokemon(nameP) {
+            var name = nameP || $("#pokeInput").val();
             $("#pokeInput").val("");
+            if (!isNaN(name)) {
+                return;
+            }
+
             $.ajax({
                 type: "GET",
-                url: 'http://pokeapi.co/api/v2/pokemon/' + name,
+                url: 'http://pokeapi.co/api/v1/pokemon/' + name + "/",
+                datatype: 'jsonp',
+                statusCode: {
+                    404: function(){
+                        alert("that's not a pokemon, try 'gengar'!");
+                    }
+                },
                 success: function(data){
-                    var tableLength
+                    type = ""
+                    for(var i = 0; i < data.types.length; i++) {
+                        type += data.types[i].name;
+                        if (i != data.types.length - 1) {
+                            type += ', ';
+                        }
+                    }
+                    $("#pokeTable").append("<tr><td>" + data.name + "</td><td>" + data.attack + "</td><td>" + data.defense + "</td><td>" + data.sp_atk + "</td><td>" + data.sp_def + "</td><td>" + data.speed + "</td><td>" + type + "</td><td>" + data.height + "</td><td>" + data.weight + "</td/tr>");
                 }, 
                 
             });
         }
-            
+        
+        var tests = ['pikachu', 'bulbasaur', 'charmander'];
+        for(var i = 0; i < 3; i++) {
+            getPokemon(tests[i]);
+        }
     </script>
 </html>
