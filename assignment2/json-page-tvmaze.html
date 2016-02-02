@@ -43,6 +43,7 @@
                 <th id="url">URL of Show</th>
                 <th id="summary">Short Summary</th>
                 <th id="cast">Main Cast</th>
+                <th id="sampleMedia">Sample Media</th>
             </tr>
             <tr></tr>
             <tr></tr>
@@ -53,9 +54,15 @@
 
     </body>
     <script>
-        //asgdgyasfhashgasjf
         var shows = ['archer', 'simpsons', 'south%20park', 'futurama', 'rick%20and%20morty'];
         var rows = document.getElementById('showTable').getElementsByTagName('tr');
+        var sampleMedia = {
+            'archer':['https://www.youtube.com/embed/_3-W-qTh4Rw'],
+            'simpsons':['https://www.youtube.com/embed/ZOziWm_MJ9k'],
+            'south%20park':['https://www.youtube.com/embed/SFzNJrgjT-Q'],
+            'futurama':['https://www.youtube.com/embed/aQPakERjJrI'],
+            'rick%20and%20morty':['https://www.youtube.com/embed/X7HmltUWXgs']
+        }
 
         for (var i = 0; i<shows.length; i++) {
             $.ajax({
@@ -63,7 +70,7 @@
                 async: false,
                 success: function(data){
                     rows[i+1].innerHTML = '<td>' + data[0].show.name + '</td>' + '<td>' + data[0].show.url + '</td>' +'<td>' + data[0].show.summary + '</td>';
-                    
+
                     $.ajax({
                         url: 'http://api.tvmaze.com/shows/' + data[0].show.id + '/cast',
                         async:false, 
@@ -87,6 +94,10 @@
                             rows[i+1].innerHTML += '<td>' + people + '</td>';
                         }
                     });
+                    
+                    console.log(data[0].show.name);
+                    clips = sampleMedia[shows[i]];
+                    rows[i+1].innerHTML += '<td><iframe width="420" height="315" src="' + clips[Math.floor(Math.random() * clips.length)] + '"frameborder="0" allowfullscreen></iframe></td>';
                 }
             });
             
