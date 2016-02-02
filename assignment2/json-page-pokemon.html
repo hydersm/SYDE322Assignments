@@ -70,6 +70,8 @@
 
         function getPokemon(nameP) {
             var name = nameP || $("#pokeInput").val();
+            name=name.toLowerCase();
+
             $("#pokeInput").val("");
             if (!isNaN(name)) {
                 return;
