@@ -1,0 +1,109 @@
+<!-- Elliot Campbell 20479865, Hyder SM 20458524 -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <style>
+            #pokeTable td, th {
+                margin:0px;
+                padding:5px;
+                border: solid 1px black;
+            }
+
+            #pokeTable th {
+                font-style: italic;
+            }
+
+            #pokeTable tr:nth-child(even) {
+                background-color: rgb(223, 216, 231);
+            }
+
+            #pokeTable{
+                border-spacing:0;
+            }
+            #name {
+                width:10%;
+            }
+            #url {
+                width:10%;
+            }
+            #summary {
+                width:40%;
+            }
+            #cast {
+                width:30%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <h1> Enter a Pokemon! </h1>
+        <input type="text" id="pokeInput"></input> <button onClick="getPokemon()">Add to Table</button></br></br>
+        <input type="checkbox" onClick="changeColumn(1)" checked>name</input>
+        <input type="checkbox" onClick="changeColumn(2)" checked>attack</input>
+        <input type="checkbox" onClick="changeColumn(3)" checked>defense</input>
+        <input type="checkbox" onClick="changeColumn(4)" checked>sp atk</input>
+        <input type="checkbox" onClick="changeColumn(5)" checked>sp def</input>
+        <input type="checkbox" onClick="changeColumn(6)" checked>speed</input>
+        <input type="checkbox" onClick="changeColumn(7)" checked>types</input>
+        <input type="checkbox" onClick="changeColumn(8)" checked>height</input>                 
+        <input type="checkbox" onClick="changeColumn(9)" checked>weight</input>
+        <table id="pokeTable">
+            <tr>
+                <th>Name</th>
+                <th>Attack</th>
+                <th>Defense</th>
+                <th>SP Attack</th>
+                <th>SP Defense</th>
+                <th>Speed</th>
+                <th>Types</th>
+                <th>Height</th>
+                <th>Weight</th>
+            </tr>
+            
+        </table>
+    </body>
+    <script>
+        var type;
+        function changeColumn(num) {
+            $('#pokeTable tr > *:nth-child('+ num +')').toggle();
+        }
+
+        function getPokemon(nameP) {
+            var name = nameP || $("#pokeInput").val();
+            name=name.toLowerCase();
+
+            $("#pokeInput").val("");
+            if (!isNaN(name)) {
+                return;
+            }
+
+            $.ajax({
+                type: "GET",
+                url: 'http://pokeapi.co/api/v1/pokemon/' + name + "/",
+                datatype: 'jsonp',
+                statusCode: {
+                    404: function(){
+                        alert("that's not a pokemon, try 'gengar'!");
+                    }
+                },
+                success: function(data){
+                    type = ""
+                    for(var i = 0; i < data.types.length; i++) {
+                        type += data.types[i].name;
+                        if (i != data.types.length - 1) {
+                            type += ', ';
+                        }
+                    }
+                    $("#pokeTable").append("<tr><td>" + data.name + "</td><td>" + data.attack + "</td><td>" + data.defense + "</td><td>" + data.sp_atk + "</td><td>" + data.sp_def + "</td><td>" + data.speed + "</td><td>" + type + "</td><td>" + data.height + "</td><td>" + data.weight + "</td/tr>");
+                }, 
+                
+            });
+        }
+        
+        var tests = ['pikachu', 'bulbasaur', 'charmander'];
+        for(var i = 0; i < 3; i++) {
+            getPokemon(tests[i]);
+        }
+    </script>
+</html>
