@@ -4,6 +4,7 @@ import sqlite3
 from contextlib import closing
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
+from datetime import date
 
 # create our little application :)
 app = Flask(__name__)
@@ -59,13 +60,84 @@ def add_booking():
     flash('New entry was successfully posted')
     return redirect(url_for('show_hotels'))
 
-@app.route('/get_bookings', methods=['GET'])
-def see_bookings():
-    g.db.execute('insert into guests (guestName, guestAddress) values (?, ?)',
-                 [request.form['guestname'], request.form['address']])
+#request args: hotelName, city, price, type, startDate(yyyy-mm-dd), endDate(yyyy-mm-dd)
+#returns list of row, each row containing: hotelId, hotelName, city, roomNo, price, type
+@app.route('/get_available_rooms', methods=['GET'])
+def see_available_rooms():
+    cur = None
+    if request.args.get('hotelName') != None and request.args.get('city') != None:
+        cur = g.db.execute('select hotelId from hotels where hotelName=(?) and city=(?)', [request.args.get('hotelName'), request.args.get('city')])
+    elif request.args.get('hotelName') != None:
+        cur = g.db.execute('select hotelId from hotels where hotelName=(?)', [request.args.get('hotelName')])
+    elif request.args.get('city') != None:
+        cur = g.db.execute('select hotelId from hotels where city=(?)', [request.args.get('city')])
+    else:
+        cur = g.db.execute('select hotelId from hotels')
+    
+    hotelIds = [row[0] for row in cur.fetchall()]
+
+    query = 'select roomNo from rooms'
+    if len(hotelIds) > 0:
+        query += ' where hotelId in (' + str(hotelIds)[1:-1] + ')'
+    if request.args.get('price') != None:
+        if 'where' in query:
+            query += ' and'
+        else:
+            query += ' where'
+
+        query += ' price=(' + str(request.args.get('price')) + ')'
+    if request.args.get('type') != None:
+        if 'where' in query:
+            query += ' and'
+        else:
+            query += ' where'
+
+        query += ' type=("' + request.args.get('type') + '")'
+    
+    cur = g.db.execute(query)
+    allRoomIds = [row[0] for row in cur.fetchall()]
+    
+    startDate = date.today().isoformat()
+    endDate = startDate
+    if request.args.get('startDate'):
+        startDate = request.args.get('startDate')
+        endDate = startDate
+    if request.args.get('endDate'):
+        endDate = request.args.get('endDate') if request.args.get('endDate') > endDate else endDate
+
+    cur = g.db.execute('select roomNo, startDate, endDate from bookings') 
+    busyRooms = [row for row in cur.fetchall()]
+    busyRoomIds = [row[0] for row in busyRooms if (startDate >= row[1] and startDate <= row[2]) or (endDate >= row[1] and endDate <= row[2])]
+
+    availRoomIds = [i for i in allRoomIds if i not in busyRoomIds]
+
+    cur = g.db.execute('select hotels.hotelId, hotels.hotelName, hotels.city, rooms.roomNo, rooms.price, rooms.type from rooms inner join hotels on rooms.hotelId=hotels.hotelId')
+    result = [row for row in cur.fetchall() if row[3] in availRoomIds]
+    return str(result)
+
+@app.route('/refresh', methods=['GET'])
+def refresh():
+    init_db()
+
+    g.db.execute('insert into hotels (city, hotelName) values ("a", "a")')
+    g.db.execute('insert into hotels (city, hotelName) values ("a", "b")')
+    g.db.execute('insert into hotels (city, hotelName) values ("b", "a")')
+    g.db.execute('insert into hotels (city, hotelName) values ("c", "a")')
+
+    g.db.execute('insert into rooms (hotelId, price, type) values (1, 3, "single")')
+    g.db.execute('insert into rooms (hotelId, price, type) values (2, 1, "single")')
+    g.db.execute('insert into rooms (hotelId, price, type) values (3, 3, "single")')
+    g.db.execute('insert into rooms (hotelId, price, type) values (4, 4, "double")')
+    g.db.execute('insert into rooms (hotelId, price, type) values (4, 3, "single")')
+    g.db.execute('insert into rooms (hotelId, price, type) values (2, 5, "double")')
+    
+    g.db.execute('insert into guests (guestName, guestAddress) values ("Bob", "Waterloo")')
+
+    g.db.execute('insert into bookings (hotelId, roomNo, guestId, startDate, endDate) values (1, 1, 1, date("2016-03-24"), date("2016-03-25"))')
+
     g.db.commit()
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_hotels'))
+    
+    return 'done'
 
 if __name__ == '__main__':
     app.run()
