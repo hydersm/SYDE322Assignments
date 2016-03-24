@@ -54,15 +54,14 @@ def add_guest():
 
 @app.route('/bookings', methods=['POST'])
 def add_booking():
-    cur = g.db.execute('select startDate endDate from bookings where hotelId=(?) and roomNo=(?) and guestId=(?)', [request.form['hotelId'], request.form['roomNo'], request.form['guestId']])
+    cur = g.db.execute('select startDate, endDate from bookings where hotelId=(?) and roomNo=(?) and guestId=(?)', [request.form['hotelId'], request.form['roomNo'], request.form['guestId']])
     rows = [row for row in cur.fetchall()]
-    
     if len(rows) > 0:
         for row in rows:
             if request.form['startDate'] >= row[0] and request.form['startDate'] <= row[1]:
-                return None
+                return render_template('bookings.html', response=None)
             elif request.form['endDate'] >= row[0] and request.form['endDate'] <= row[1]:
-                return None
+                return render_template('bookings.html', response=None)
 
     g.db.execute('insert into bookings (hotelId, roomNo, guestId, startDate, endDate) values (?, ?, ?, ?, ?)', [request.form['hotelId'], request.form['roomNo'], request.form['guestId'], request.form['startDate'], request.form['endDate']])
     g.db.commit()
@@ -70,7 +69,7 @@ def add_booking():
     cur = g.db.execute('select bookingId from bookings where hotelId=(?) and roomNo=(?) and guestId=(?) and startDate=(?)', [request.form['hotelId'], request.form['roomNo'], request.form['guestId'], request.form['startDate']])
     rows = [row for row in cur.fetchall()]
     
-    return rows[0][0]
+    return render_template('bookings.html', response=rows[0][0])
 
 @app.route('/booking')
 def gotobookings():

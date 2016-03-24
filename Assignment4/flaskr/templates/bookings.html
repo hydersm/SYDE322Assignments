@@ -22,8 +22,8 @@
       </dl>
     </form>
     {% if response is not defined %}
-    {% elif response|length %}
-    <p> Booking successful! Your booking ID is </p>
+    {% elif response is not none %}
+    <p> Booking successful! Your booking ID is {{ response }}</p>
     {% else %}
     <p> Sorry, that selection has been booked.<p>
     {% endif %}
