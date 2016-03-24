@@ -12,8 +12,8 @@
         <dd><textarea name=hotelId></textarea>
         <dt>Room Number
         <dd><textarea name=roomNo ></textarea>
-        <dt>Guest Name
-        <dd><textarea name=guestName></textarea>
+        <dt>Guest ID
+        <dd><textarea name=guestId></textarea>
         <dt>Start Date
         <dd><input type = date name=startDate>
         <dt>End Date
@@ -21,6 +21,12 @@
         <dd><input type=submit value="Make Booking">
       </dl>
     </form>
+    {% if response is not defined %}
+    {% elif response|length %}
+    <p> Booking successful! Your booking ID is </p>
+    {% else %}
+    <p> Sorry, that selection has been booked.<p>
+    {% endif %}
   </div>
   <div style="float:right">
     <h2> Check Bookings! </h2>

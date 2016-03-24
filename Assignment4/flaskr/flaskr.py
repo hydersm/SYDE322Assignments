@@ -60,14 +60,6 @@ def add_booking():
     flash('New entry was successfully posted')
     return
 
-@app.route('/bookings', methods=['GET'])
-def see_bookings():
-    g.db.execute('insert into guests (guestName, guestAddress) values (?, ?)',
-                 [request.form['guestname'], request.form['address']])
-    g.db.commit()
-    flash('New entry was successfully posted')
-    return
-
 @app.route('/booking')
 def gotobookings():
     return render_template('bookings.html')
