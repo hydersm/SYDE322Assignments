@@ -82,18 +82,18 @@ def see_bookings():
 
 @app.route('/booking')
 def gotobookings():
-    return render_template('bookings.html');
+    return render_template('bookings.html')
 
 #request args: hotelName, city, price, type, startDate(yyyy-mm-dd), endDate(yyyy-mm-dd)
 #returns list of rows, each row containing: hotelId, hotelName, city, roomNo, price, type
 @app.route('/get_available_rooms', methods=['GET'])
 def see_available_rooms():
     cur = None
-    if request.args.get('hotelName') != None and request.args.get('city') != None:
+    if request.args.get('hotelName') != "" and request.args.get('city') != "":
         cur = g.db.execute('select hotelId from hotels where hotelName=(?) and city=(?)', [request.args.get('hotelName'), request.args.get('city')])
-    elif request.args.get('hotelName') != None:
+    elif request.args.get('hotelName') != "":
         cur = g.db.execute('select hotelId from hotels where hotelName=(?)', [request.args.get('hotelName')])
-    elif request.args.get('city') != None:
+    elif request.args.get('city') != "":
         cur = g.db.execute('select hotelId from hotels where city=(?)', [request.args.get('city')])
     else:
         cur = g.db.execute('select hotelId from hotels')
@@ -103,21 +103,23 @@ def see_available_rooms():
     query = 'select roomNo from rooms'
     if len(hotelIds) > 0:
         query += ' where hotelId in (' + str(hotelIds)[1:-1] + ')'
-    if request.args.get('price') != None:
+    if request.args.get('price') != "":
         if 'where' in query:
             query += ' and'
         else:
             query += ' where'
 
-        query += ' price=(' + str(request.args.get('price')) + ')'
-    if request.args.get('type') != None:
+        query += ' price=("' + request.args.get('price') + '")'
+    print request.args.get('type')
+    if request.args.get('type') != "":
         if 'where' in query:
             query += ' and'
         else:
             query += ' where'
 
-        query += ' type=("' + request.args.get('type') + '")'
-    
+        query += ' type=("' + str(request.args.get('type')) +'")'
+
+    print query
     cur = g.db.execute(query)
     allRoomIds = [row[0] for row in cur.fetchall()]
     
@@ -137,7 +139,20 @@ def see_available_rooms():
 
     cur = g.db.execute('select hotels.hotelId, hotels.hotelName, hotels.city, rooms.roomNo, rooms.price, rooms.type from rooms inner join hotels on rooms.hotelId=hotels.hotelId')
     result = [row for row in cur.fetchall() if row[3] in availRoomIds]
-    return str(result)
+    bookings = []
+    for room in result:
+        bookings.append(
+                {
+                    "hotelId": room[0],
+                    "hotelName": str(room[1]),
+                    "roomNo": str(room[2]),
+                    "guestId": room[3],
+                    "price": room[4],
+                    "type": str(room[5])
+                }
+            )
+
+    return render_template('bookings.html', bookings=bookings)
 
 @app.route('/refresh', methods=['GET'])
 def refresh():
