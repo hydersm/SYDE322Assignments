@@ -52,13 +52,25 @@ def add_guest():
     flash('New entry was successfully posted')
     return redirect(url_for('show_hotels'))
 
-@app.route('/add_booking', methods=['POST'])
+@app.route('/bookings', methods=['POST'])
 def add_booking():
     g.db.execute('insert into guests (guestName, guestAddress) values (?, ?)',
                  [request.form['guestname'], request.form['address']])
     g.db.commit()
     flash('New entry was successfully posted')
-    return redirect(url_for('show_hotels'))
+    return
+
+@app.route('/bookings', methods=['GET'])
+def see_bookings():
+    g.db.execute('insert into guests (guestName, guestAddress) values (?, ?)',
+                 [request.form['guestname'], request.form['address']])
+    g.db.commit()
+    flash('New entry was successfully posted')
+    return
+
+@app.route('/booking')
+def gotobookings():
+    return render_template('bookings.html');
 
 #request args: hotelName, city, price, type, startDate(yyyy-mm-dd), endDate(yyyy-mm-dd)
 #returns list of row, each row containing: hotelId, hotelName, city, roomNo, price, type
