@@ -42,6 +42,7 @@
     {% if bookings|length %}
     <table>
         <tr>
+          <td>Hotel ID</td>
           <td>Hotel Name</td>
           <td>Room Number</td>
           <td>Guest ID</td>
@@ -51,6 +52,7 @@
     {% endif %}
     {% for booking in bookings %}
         <tr>
+          <td>{{ booking.hotelId }}</td>
           <td>{{ booking.hotelName }}</td>
           <td>{{ booking.roomNo }}</td>
           <td>{{ booking.guestId }}</td>
