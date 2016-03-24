@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block body %}
+<div style="clear:both" >
+  <a href="{{ url_for('show_hotels') }}">Back to Guests</a>
+</div>
+<div style="width:50%">
+  <div style="float:left;">
+    <h2> Book a Room! </h2>
+    <form action="{{ url_for('add_booking') }}" method=post class=add-booking>
+      <dl>
+        <dt>Hotel ID
+        <dd><textarea name=hotelId></textarea>
+        <dt>Room Number
+        <dd><textarea name=roomNo ></textarea>
+        <dt>Guest Name
+        <dd><textarea name=guestName></textarea>
+        <dt>Start Date
+        <dd><input type = date name=startDate>
+        <dt>End Date
+        <dd><input type=date name=endDate>
+        <dd><input type=submit value="Make Booking">
+      </dl>
+    </form>
+  </div>
+  <div style="float:right">
+    <h2> Check Bookings! </h2>
+    <form action="{{ url_for('see_available_rooms') }}" method=get class=see-bookings>
+      <dl>
+        <dt>Start Date
+        <dd><input type=date name=startDate>
+        <dt>End Date
+        <dd><input type=date name=endDate>
+        <dt>Hotel Name
+        <dd><textarea name=hotelName></textarea>
+        <dt>Room Type
+        <dd><input type=text name=type>
+        <dt>Room Price
+        <dd><input type=number name=price>
+        <dd><input type=submit value="Check Bookings">
+      </dl>
+    </form>
+    {% if bookings|length %}
+    <table>
+        <tr>
+          <td>Hotel Name</td>
+          <td>Room Number</td>
+          <td>Guest ID</td>
+          <td>Price</td>
+          <td>Room Type</td>
+        </tr>
+    {% endif %}
+    {% for booking in bookings %}
+        <tr>
+          <td>{{ booking.hotelName }}</td>
+          <td>{{ booking.roomNo }}</td>
+          <td>{{ booking.guestId }}</td>
+          <td>{{ booking.price }}</td>
+          <td>{{ booking.type }}</td>
+        </tr>
+    {% else %}
+      <tr>
+        No Rooms Available.
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+</div>
+<br>
+
+{% endblock %}
